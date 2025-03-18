@@ -12,23 +12,27 @@ export const authOptions: NextAuthOptions = {
                 username: {label: "Username", type: "text", placeholder: "jsmith"},
                 password: {label: "Password", type: "password"}
             },
-            async authorize(credentials: any): Promise<any> {
+            async authorize(credentials: any): Promise<any | null> {
                 await dbConnect();
                 try {
                     const user = await UserModel.findOne({username: credentials.username});
                     if (!user) {
-                        throw new Error("User not found!");
+                        console.error("User not found!");
+                        return null;
                     }
-                    if (!user.isVerified) {
-                        throw new Error("Please verify your account before login");
+                    if (!user?.isVerified) {
+                        console.error("Please verify your account before login");
+                        return null;
                     }
                     const isPasswordCorrect = await bcrypt.compare(credentials.password as string, user.password);
                     if (!isPasswordCorrect) {
-                        throw new Error("Invalid credentials");
+                        console.error("Invalid credentials");
+                        return null;
                     }
                     return user;
                 } catch (e: any) {
-                    throw new Error(e.message || "Authorization error");
+                    console.error("Authorization error: " + e.message);
+                    return null;
                 }
             },
         })

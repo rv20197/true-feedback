@@ -1,21 +1,18 @@
-import {
-    Html,
-    Head,
-    Font,
-    Preview,
-    Heading,
-    Row,
-    Section,
-    Text,
-    Button,
-} from '@react-email/components';
+import {Font, Head, Heading, Html, Preview, Row, Section, Text,} from '@react-email/components';
 
 interface VerificationEmailProps {
     username: string;
     verifyCode: string;
 }
 
-export default function VerificationEmail({ username, verifyCode }: VerificationEmailProps) {
+/**
+ * VerificationEmail component renders an HTML email for the verification process.
+ * It includes the username and verification code as dynamic content.
+ *
+ * @param {VerificationEmailProps} props - The properties for the VerificationEmail component.
+ * @returns {JSX.Element} The rendered email component.
+ */
+export default function VerificationEmail({username, verifyCode}: VerificationEmailProps): JSX.Element {
     return (
         <Html lang="en" dir="ltr">
             <Head>
@@ -50,14 +47,15 @@ export default function VerificationEmail({ username, verifyCode }: Verification
                         If you did not request this code, please ignore this email.
                     </Text>
                 </Row>
+                {/* Uncomment the following block to add a verification button */}
                 {/* <Row>
-          <Button
-            href={`http://localhost:3000/verify/${username}`}
-            style={{ color: '#61dafb' }}
-          >
-            Verify here
-          </Button>
-        </Row> */}
+                    <Button
+                        href={`http://localhost:3000/verify/${username}`}
+                        style={{ color: '#61dafb' }}
+                    >
+                        Verify here
+                    </Button>
+                </Row> */}
             </Section>
         </Html>
     );

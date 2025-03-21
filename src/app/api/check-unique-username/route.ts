@@ -8,6 +8,10 @@ const userNameQuerySchema = z.object({
 });
 
 export const GET = async (request: Request) => {
+    if (request.method !== "GET") {
+        return Response.json({success: false, message: "Method not allowed"}, {status: 405});
+    }
+
     await dbConnect();
 
     try {
@@ -19,7 +23,7 @@ export const GET = async (request: Request) => {
         if (!result.success) {
             return Response.json({success: false, message: result.error.format().username?._errors}, {status: 400});
         }
-        const existingUser = await UserModel.findOne({username: result.data.username});
+        const existingUser = await UserModel.findOne({username: result.data.username, isVerified: true});
         if (existingUser) {
             return Response.json({success: false, message: "Username is already taken"}, {status: 400});
         }

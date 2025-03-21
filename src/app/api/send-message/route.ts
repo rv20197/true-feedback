@@ -10,7 +10,7 @@ import MessageModel, {Message} from "@/models/Message";
  *
  * @throws {Error} - If there is an error processing the request.
  */
-export const POST = async (request: Request) => {
+export const POST = async (request: Request): Promise<Response> => {
     await dbConnect();
 
     try {

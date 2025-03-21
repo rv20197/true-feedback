@@ -1,4 +1,4 @@
-import mongoose,{Schema,Document} from "mongoose";
+import mongoose, {Document, Schema} from "mongoose";
 import {Message, MessageSchema} from "@/models/Message";
 
 export interface User extends Document {
@@ -13,7 +13,7 @@ export interface User extends Document {
 }
 
 
-export const UserSchema:Schema<User> = new Schema({
+export const UserSchema: Schema<User> = new Schema({
     username: {
         type: String,
         required: [true, "Username is required"],
@@ -31,7 +31,7 @@ export const UserSchema:Schema<User> = new Schema({
         type: String,
         required: [true, "Email is required"],
         unique: true,
-        match: [/^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/, "Please add a valid email address"],//[]
+        match: [/^\w+([.-]?\w+)*@\w+([.-]?\w+)*(\.\w{2,3})+$/, "Please add a valid email address"],//[]
     },
     verifyCode: {
         type: String,
@@ -39,7 +39,7 @@ export const UserSchema:Schema<User> = new Schema({
     },
     verifyCodeExpiry: {
         type: Date,
-        required: [true, "Verification Code Expirt is required"],
+        required: [true, "Verification Code Expiry is required"],
     },
     isVerified: {
         type: Boolean,

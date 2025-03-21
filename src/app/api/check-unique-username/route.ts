@@ -7,6 +7,14 @@ const userNameQuerySchema = z.object({
     username: userNameValidation
 });
 
+/**
+ * Checks if a username is unique.
+ *
+ * @param {Request} request - The Request object.
+ * @returns {Response} - A Response object.
+ *
+ * @throws {Error} - If there is an error checking if the username is unique.
+ */
 export const GET = async (request: Request) => {
     await dbConnect();
 

@@ -1,4 +1,5 @@
 import {Font, Head, Heading, Html, Preview, Row, Section, Text,} from '@react-email/components';
+import {JSX} from "react";
 
 interface VerificationEmailProps {
     username: string;

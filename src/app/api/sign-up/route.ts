@@ -55,7 +55,7 @@ export const POST = async (request: Request) => {
                 verifyCode,
                 verifyCodeExpiry: expiryDate,
                 isVerified: false,
-                isAcceptingMessage: true,
+                isAcceptingMessages: true,
                 messages: []
             });
 

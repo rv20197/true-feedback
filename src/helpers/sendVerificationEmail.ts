@@ -22,8 +22,8 @@ export const sendVerificationEmail = async (email: string, username: string, ver
             // Use the VerificationEmail component to generate the email body
             react: VerificationEmail({username, verifyCode}),
         });
-        // Return a successful response with a message and the isAcceptingMessage flag set to true
-        return {success: true, message: "Verification email sent successfully", isAcceptingMessage: true};
+        // Return a successful response with a message and the isAcceptingMessages flag set to true
+        return {success: true, message: "Verification email sent successfully", isAcceptingMessages: true};
     } catch (e) {
         // Log any errors to the console
         console.error("Error sending verification email", e);

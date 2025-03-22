@@ -1,6 +1,6 @@
 'use client';
-import {useEffect, useOptimistic, useState} from "react";
-import {useDebounceValue} from "usehooks-ts";
+import {useEffect, useState} from "react";
+import {useDebounceCallback} from "usehooks-ts";
 import {useRouter} from "next/navigation";
 import {SubmitHandler, useForm} from "react-hook-form";
 import {zodResolver} from "@hookform/resolvers/zod";
@@ -19,9 +19,9 @@ import Link from "next/link";
 const Page = () => {
     const [userName, setUserName] = useState('');
     const [userNameMessage, setUserNameMessage] = useState('');
-    const [isCheckingUserName, setIsCheckingUserName] = useOptimistic(false);
-    const [isSubmitting, setIsSubmitting] = useOptimistic(false);
-    const [debouncedUserName, setDebouncedUserName] = useDebounceValue(userName, 300);
+    const [isCheckingUserName, setIsCheckingUserName] = useState(false);
+    const [isSubmitting, setIsSubmitting] = useState(false);
+    const debounced = useDebounceCallback(setUserName, 500);
 
     const router = useRouter();
 
@@ -38,11 +38,11 @@ const Page = () => {
 
     useEffect(() => {
         const checkUniqueUserName = async (): Promise<void> => {
-            setIsCheckingUserName(true);
-            setUserNameMessage('');
-            if (debouncedUserName) {
+            if (userName) {
                 try {
-                    const response = await axios.get(`/api/check-username?username=${debouncedUserName}`);
+                    setIsCheckingUserName(true);
+                    setUserNameMessage('');
+                    const response = await axios.get(`/api/check-username?username=${userName}`);
                     const {message, success} = response.data;
                     if (success) {
                         setUserNameMessage(message);
@@ -58,8 +58,8 @@ const Page = () => {
                 }
             }
         };
-        checkUniqueUserName()
-    }, [debouncedUserName]);
+        checkUniqueUserName();
+    }, [userName]);
 
     const onSubmitHandler: SubmitHandler<z.infer<typeof signUpSchema>> = async (data): Promise<void> => {
         setIsSubmitting(true);
@@ -87,8 +87,8 @@ const Page = () => {
 
 
     return (
-        <div className={"flex justify-center items-center min-h-screen bg-gray-100"}>
-            <div className="w-full max-w-8 p-8 space-y-8 bg-white rounded-lg shadow-md">
+        <div className={"flex justify-center items-center min-h-screen bg-gray-800"}>
+            <div className="w-full max-w-md p-8 space-y-8 bg-white rounded-lg shadow-md">
                 <div className="text-center">
                     <h1 className="text-4xl font extrabold tracking-tight lg:text-5xl mb-6">Join Mystery Message</h1>
                     <p className="mb-4">Sign up to start your anonymous chat experience.</p>
@@ -104,10 +104,13 @@ const Page = () => {
                                     <FormControl>
                                         <Input placeholder="UserName" {...field} type={"text"}
                                                onChange={e => {
-                                                   setUserName(e.target.value);
+                                                   debounced(e.target.value);
                                                    field.onChange(e)
                                                }}/>
                                     </FormControl>
+                                    {isCheckingUserName && <Loader2 className={"animate-spin"}/>}
+                                    {userNameMessage && <span
+                                        className={`text-sm ${userNameMessage === 'Username is unique' ? 'text-muted-foreground' : 'text-destructive'}`}>{userNameMessage}</span>}
                                     <FormMessage/>
                                 </FormItem>
                             )}
@@ -141,7 +144,7 @@ const Page = () => {
                             )}
                         />
                         <Button type={"submit"} disabled={isCheckingUserName || isSubmitting}>
-                            {isCheckingUserName || isSubmitting ?
+                            {isSubmitting ?
                                 <Loader2 className={"mr-2 h-4 w-4 animate-spin"}/> : "Sign Up"}
                         </Button>
                     </form>

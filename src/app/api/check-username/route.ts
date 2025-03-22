@@ -38,7 +38,7 @@ export const GET = async (request: Request) => {
             return Response.json({success: false, message: "Username is already taken"}, {status: 400});
         }
         // Return a 200 status code with a success message if the username is unique
-        return Response.json({success: true, message: "Username is unique"}, {status: 200});
+        return Response.json({success: true, message: "Username is available"}, {status: 200});
     } catch (e) {
         // Catch any errors that occur and log them
         console.error('Error checking unique username', e);

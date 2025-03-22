@@ -1,11 +1,11 @@
 'use client';
-import {useEffect, useState} from "react";
-import {useDebounceCallback} from "usehooks-ts";
+import {useEffect, useOptimistic, useState} from "react";
+import {useDebounceValue} from "usehooks-ts";
 import {useRouter} from "next/navigation";
 import {SubmitHandler, useForm} from "react-hook-form";
 import {zodResolver} from "@hookform/resolvers/zod";
 import {signUpSchema} from "@/schemas/signUp.schema";
-import * as z from "zod";
+import z from "zod";
 import axios, {AxiosError, AxiosResponse} from "axios";
 import {ApiResponse} from "@/types/ApiResponse";
 import {toast} from "sonner";
@@ -19,20 +19,14 @@ import Link from "next/link";
 const Page = () => {
     const [userName, setUserName] = useState('');
     const [userNameMessage, setUserNameMessage] = useState('');
-    const [isCheckingUserName, setIsCheckingUserName] = useState(false);
-    const [isSubmitting, setIsSubmitting] = useState(false);
-    const debounced = useDebounceCallback(setUserName, 500);
+    const [isCheckingUserName, setIsCheckingUserName] = useOptimistic(false);
+    const [isSubmitting, setIsSubmitting] = useOptimistic(false);
+    const [debouncedUserName, setDebouncedUserName] = useDebounceValue(userName, 300);
 
     const router = useRouter();
 
-    /**
-     * Form handler for the sign-up form
-     * @param data - The form data
-     */
     const form = useForm<z.infer<typeof signUpSchema>>({
-        // Use the signUpSchema as the resolver
         resolver: zodResolver(signUpSchema),
-        // Initialize the form with default values
         defaultValues: {
             username: '',
             email: '',
@@ -41,15 +35,12 @@ const Page = () => {
     });
 
     useEffect(() => {
-        /**
-         * A function to check if the username is unique
-         */
         const checkUniqueUserName = async (): Promise<void> => {
-            if (userName) {
+            setIsCheckingUserName(true);
+            setUserNameMessage('');
+            if (debouncedUserName) {
                 try {
-                    setIsCheckingUserName(true);
-                    setUserNameMessage('');
-                    const response = await axios.get(`/api/check-username?username=${userName}`);
+                    const response = await axios.get(`/api/check-username?username=${debouncedUserName}`);
                     const {message, success} = response.data;
                     if (success) {
                         setUserNameMessage(message);
@@ -65,13 +56,9 @@ const Page = () => {
                 }
             }
         };
-        checkUniqueUserName();
-    }, [userName]);
+        checkUniqueUserName()
+    }, [debouncedUserName]);
 
-    /**
-     * Handles the on submit event of the form
-     * @param data - The form data
-     */
     const onSubmitHandler: SubmitHandler<z.infer<typeof signUpSchema>> = async (data): Promise<void> => {
         setIsSubmitting(true);
         try {
@@ -98,8 +85,8 @@ const Page = () => {
 
 
     return (
-        <div className={"flex justify-center items-center min-h-screen bg-gray-800"}>
-            <div className="w-full max-w-md p-8 space-y-8 bg-white rounded-lg shadow-md">
+        <div className={"flex justify-center items-center min-h-screen bg-gray-100"}>
+            <div className="w-full max-w-8 p-8 space-y-8 bg-white rounded-lg shadow-md">
                 <div className="text-center">
                     <h1 className="text-4xl font extrabold tracking-tight lg:text-5xl mb-6">Join Mystery Message</h1>
                     <p className="mb-4">Sign up to start your anonymous chat experience.</p>
@@ -115,13 +102,10 @@ const Page = () => {
                                     <FormControl>
                                         <Input placeholder="UserName" {...field} type={"text"}
                                                onChange={e => {
-                                                   debounced(e.target.value);
+                                                   setUserName(e.target.value);
                                                    field.onChange(e)
                                                }}/>
                                     </FormControl>
-                                    {isCheckingUserName && <Loader2 className={"animate-spin"}/>}
-                                    {userNameMessage && <span
-                                        className={`text-sm ${userNameMessage === 'Username is available' ? 'text-green-500' : 'text-destructive'}`}>{userNameMessage}</span>}
                                     <FormMessage/>
                                 </FormItem>
                             )}
@@ -155,7 +139,7 @@ const Page = () => {
                             )}
                         />
                         <Button type={"submit"} disabled={isCheckingUserName || isSubmitting}>
-                            {isSubmitting ?
+                            {isCheckingUserName || isSubmitting ?
                                 <Loader2 className={"mr-2 h-4 w-4 animate-spin"}/> : "Sign Up"}
                         </Button>
                     </form>

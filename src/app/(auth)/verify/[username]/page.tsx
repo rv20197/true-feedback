@@ -12,12 +12,20 @@ import {Form, FormControl, FormField, FormItem, FormLabel, FormMessage} from "@/
 import {Input} from "@/components/ui/input";
 import {Button} from "@/components/ui/button";
 
+/**
+ * Page to verify the user account with the verification code sent to the user's email.
+ * @returns {JSX.Element}
+ * @constructor
+ */
 const Page = () => {
     const router = useRouter();
     const params = useParams<{ username: string }>();
     const [isSubmitting, setIsSubmitting] = useState(false);
 
-
+    /**
+     * Form handler for the verify form
+     * @type {UseFormProps<z.infer<typeof verifySchema>>}
+     */
     const form = useForm<z.infer<typeof verifySchema>>({
         resolver: zodResolver(verifySchema),
         defaultValues: {
@@ -25,7 +33,12 @@ const Page = () => {
         }
     });
 
+    /**
+     * Handles the on submit event of the form
+     * @param data - The form data
+     */
     const onSubmitHandler = async (data: z.infer<typeof verifySchema>) => {
+        setIsSubmitting(true);
         try {
             const response = await axios.post('/api/verify-code', {
                 username: params.username,
@@ -46,8 +59,11 @@ const Page = () => {
                 duration: 3000
             });
             console.error(axiosError.response?.data.message ?? 'Error verifying user, please try again later');
+        } finally {
+            setIsSubmitting(false);
         }
     }
+
     return (
         <div className={'flex justify-center items-center min-h-screen bg-gray-800'}>
             <div className={'w-full max-w-md p-8 space-y-8 bg-white rounded-lg shadow-md'}>
@@ -70,7 +86,7 @@ const Page = () => {
                                 </FormItem>
                             )}
                         />
-                        <Button type="submit">Submit</Button>
+                        <Button type="submit" disabled={isSubmitting}>Submit</Button>
                     </form>
                 </Form>
             </div>

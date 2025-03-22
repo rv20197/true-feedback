@@ -25,6 +25,10 @@ const Page = () => {
 
     const router = useRouter();
 
+    /**
+     * Form handler for the sign up form
+     * @param data - The form data
+     */
     const form = useForm<z.infer<typeof signUpSchema>>({
         // Use the signUpSchema as the resolver
         resolver: zodResolver(signUpSchema),
@@ -37,6 +41,9 @@ const Page = () => {
     });
 
     useEffect(() => {
+        /**
+         * A function to check if the username is unique
+         */
         const checkUniqueUserName = async (): Promise<void> => {
             if (userName) {
                 try {
@@ -61,6 +68,10 @@ const Page = () => {
         checkUniqueUserName();
     }, [userName]);
 
+    /**
+     * Handles the on submit event of the form
+     * @param data - The form data
+     */
     const onSubmitHandler: SubmitHandler<z.infer<typeof signUpSchema>> = async (data): Promise<void> => {
         setIsSubmitting(true);
         try {

@@ -11,7 +11,7 @@ import {sendVerificationEmail} from "@/helpers/sendVerificationEmail";
  *
  * @throws {Error} - If there is an error registering a user.
  */
-export const POST = async (request: Request) => {
+export const POST = async (request: Request): Promise<Response> => {
     await dbConnect(); // Connect to the database
 
     try {

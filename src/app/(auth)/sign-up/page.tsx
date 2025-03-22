@@ -111,9 +111,9 @@ const Page = () => {
                             name="username"
                             render={({field}) => (
                                 <FormItem>
-                                    <FormLabel>Username</FormLabel>
+                                    <FormLabel>User Name</FormLabel>
                                     <FormControl>
-                                        <Input placeholder="UserName" {...field} type={"text"}
+                                        <Input placeholder="User Name" {...field} type={"text"}
                                                onChange={e => {
                                                    debounced(e.target.value);
                                                    field.onChange(e)

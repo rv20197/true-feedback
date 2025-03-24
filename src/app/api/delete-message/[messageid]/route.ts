@@ -13,8 +13,10 @@ import UserModel from "@/models/User";
  *
  * @throws {Error} - If there is an error deleting the message.
  */
-export const DELETE = async (request: Request, {params}: { params: { messageid: string } }): Promise<Response> => {
-    const messageId = params.messageid;
+export const DELETE = async (request: Request, {params}: {
+    params: Promise<{ messageid: string }>
+}): Promise<Response> => {
+    const messageId = (await params).messageid;
     await dbConnect();
 
     try {

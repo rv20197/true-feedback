@@ -4,7 +4,6 @@ import {signOut, useSession} from "next-auth/react";
 import {User} from 'next-auth';
 import {Button} from "@/components/ui/button";
 import {Fragment} from "react";
-import {useRouter} from "next/navigation";
 
 /**
  * The Navbar component is a Next.js component that renders a navigation bar
@@ -22,8 +21,6 @@ const Navbar = () => {
      * The user, if any.
      */
     const user: User = session?.user as User;
-
-    const router = useRouter();
 
     const signOutHandler = async () => {
         await signOut();

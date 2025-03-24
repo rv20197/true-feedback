@@ -21,7 +21,7 @@ export async function POST() {
 
         // Return the response with a success status
         return result.toDataStreamResponse();
-    } catch (error: any) {
+    } catch (error: unknown) {
         if (error instanceof OpenAI.APIError) {
             // OpenAI API error handling
             const {name, status, headers, message} = error;

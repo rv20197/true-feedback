@@ -9,8 +9,11 @@ a custom authentication, authorization, and session management mechanism.
 - **Anonymous Messaging**: Users can send messages anonymously to other users.
 - **OpenAI Message Suggestions**: Get AI-powered suggestions for messages.
 - **Mongoose Integration**: Messages are stored securely in MongoDB.
-- **Custom Authentication, Authorization & Session Management**: A self-designed mechanism to authenticate, authorize
-  users, and manage sessions.
+- **Authentication & Authorization with Next-Auth**: Secure authentication and session management using Next-Auth.
+- **User Message Toggle**: Users can enable or disable receiving anonymous messages.
+- **Username Availability Check**: Ensure username availability during sign-up.
+- **Email Verification**: Users must verify their email using a verification code during sign-up.
+- **Email Service using Resend**: Email verification and notifications are handled via Resend.
 - **Backend with Next.js API Routes**: Handles requests for message storage and AI suggestions.
 
 ## Tech Stack
@@ -18,9 +21,9 @@ a custom authentication, authorization, and session management mechanism.
 - **Frontend**: Next.js, React.js
 - **Backend**: Next.js API Routes
 - **Database**: MongoDB with Mongoose
-- **Authentication & Authorization**: Custom-designed mechanism with session management
+- **Authentication & Authorization**: Next-Auth with session management
+- **Email Service**: Resend API
 - **AI Integration**: OpenAI API
-- **State Management**: Context API / Zustand / Redux (if needed)
 
 ## Installation
 
@@ -29,6 +32,7 @@ a custom authentication, authorization, and session management mechanism.
 - Node.js (>=22.x)
 - MongoDB (Local or Cloud)
 - OpenAI API Key
+- Resend API Key
 
 ### Setup & Installation
 
@@ -46,8 +50,9 @@ a custom authentication, authorization, and session management mechanism.
    ```env
    MONGODB_URI=your_mongodb_connection_string
    OPENAI_API_KEY=your_openai_api_key
-   JWT_SECRET=your_secret_key
-   NEXT_PUBLIC_APP_URL=http://localhost:3000
+   NEXTAUTH_SECRET=your_next_auth_secret
+   NEXTAUTH_URL=http://localhost:3000
+   RESEND_API_KEY=your_resend_api_key
    ```
 4. Run the app:
    ```sh
@@ -56,28 +61,33 @@ a custom authentication, authorization, and session management mechanism.
 
 ## API Endpoints
 
-### Authentication & Session Management
+### Authentication & Session Management (Next-Auth)
 
-- **POST** `/api/auth/register` - Register a new user
-- **POST** `/api/auth/login` - Login user and start session
-- **POST** `/api/auth/logout` - Logout user and destroy session
-- **GET** `/api/auth/session` - Check active session
+- **POST** `/api/sign-up` - Register a new user
+- **POST** `/api/sign-in` - Login user via Next-Auth
+- **POST** `/api/sign-out` - Logout user via Next-Auth
+- **GET** `/api/check-username?username={username}` - Check if a username is available
+- **POST** `/api/verify-code` - Verify email using a code sent to the user's email
 
 ### Messaging
 
-- **POST** `/api/messages/send` - Send an anonymous message
-- **GET** `/api/messages/user/{userId}` - Fetch received messages for a user
+- **POST** `/api/send-message` - Send an anonymous message
+- **GET** `/api/get-messages` - Fetch received messages for a user
+- **PATCH** `/api/accept-messages` - Toggle message reception setting
 
 ### AI Suggestions
 
-- **POST** `/api/messages/suggest` - Get message suggestions from OpenAI
+- **POST** `/api/suggest-messages` - Get message suggestions from OpenAI
 
 ## Usage
 
-1. Register or log in to access the messaging feature.
-2. Use the AI-powered suggestion feature to generate message ideas.
-3. Send anonymous messages to other users.
-4. View received messages in the dashboard.
+1. Register or log in using Next-Auth to access the messaging feature.
+2. Verify your email using the code sent to your email inbox.
+3. Use the AI-powered suggestion feature to generate message ideas.
+4. Send anonymous messages to other users.
+5. View received messages in the dashboard.
+6. Toggle message reception on/off in settings.
+7. Ensure your desired username is available before signing up.
 
 ## Deployment
 

@@ -11,21 +11,16 @@ import {zodResolver} from "@hookform/resolvers/zod";
 import axios, {AxiosError} from "axios";
 import {ApiResponse} from "@/types/ApiResponse";
 import {toast} from "sonner";
-import {useRouter} from "next/navigation";
 import MessageCard from "@/components/MessageCard/MessageCard";
 import {Loader2, RefreshCcw} from "lucide-react";
 import {Separator} from "@/components/ui/separator";
 import {Switch} from "@/components/ui/switch";
-import {User} from "next-auth";
 
 const Page = () => {
     const [messages, setMessages] = useState<Message[]>([]);
     const [isLoading, setIsLoading] = useState(false);
     const [isSwitchLoading, setIsSwitchLoading] = useState(false);
-    const router = useRouter();
-    const handleDeleteMessage = async (messageId: string) => {
-        setMessages(messages.filter(message => message._id !== messageId));
-    }
+    const [profileUrl, setProfileUrl] = useState<string>('');
 
     const {data: session} = useSession();
 
@@ -34,6 +29,16 @@ const Page = () => {
     });
 
     const acceptMessages = watch('isAcceptingMessages');
+
+    useEffect(() => {
+        if (typeof window !== "undefined") {
+            setProfileUrl(`${window.location.origin}/u/${session?.user?.username}`);
+        }
+    }, [session]);
+
+    const handleDeleteMessage = async (messageId: string) => {
+        setMessages((prevMessages) => prevMessages.filter(message => message._id !== messageId));
+    };
 
     const getAcceptMessages = useCallback(async () => {
         try {
@@ -54,7 +59,6 @@ const Page = () => {
     const getAllMessages = useCallback(async (refresh: boolean = false) => {
         try {
             setIsLoading(true);
-            setIsSwitchLoading(false);
             const response = await axios.get<ApiResponse>('/api/get-messages');
             setMessages(response.data.messages as Message[] || []);
             if (refresh) {
@@ -71,15 +75,15 @@ const Page = () => {
             });
         } finally {
             setIsLoading(false);
-            setIsSwitchLoading(false);
         }
-    }, [setIsLoading, setMessages]);
+    }, []);
 
     useEffect(() => {
-        if (!session || !session.user) return;
-        getAllMessages();
-        getAcceptMessages();
-    }, [session, setValue, getAcceptMessages, getAllMessages]);
+        if (session?.user) {
+            getAllMessages();
+            getAcceptMessages();
+        }
+    }, [session, getAcceptMessages, getAllMessages]);
 
     const handleSwitchChange = async () => {
         try {
@@ -99,11 +103,7 @@ const Page = () => {
         } finally {
             setIsSwitchLoading(false);
         }
-    }
-
-    const {username} = session?.user as User;
-
-    const profileUrl = `${window.location.origin}/u/${username}`;
+    };
 
     const copyToClipboard = async () => {
         await navigator.clipboard.writeText(profileUrl);
@@ -111,19 +111,18 @@ const Page = () => {
             description: "Copied to clipboard",
             duration: 3000
         });
-    }
+    };
 
-    if (!session || !session.user) {
-        router.replace('/sign-in')
+    if (!session?.user) {
+        return null;
     }
-
 
     return (
         <div className="my-8 mx-4 md:mx-8 lg:mx-auto p-6 bg-white rounded w-full max-w-6xl">
             <h1 className="text-4xl font-bold mb-4">User Dashboard</h1>
 
             <div className="mb-4">
-                <h2 className="text-lg font-semibold mb-2">Copy Your Unique Link</h2>{' '}
+                <h2 className="text-lg font-semibold mb-2">Copy Your Unique Link</h2>
                 <div className="flex items-center">
                     <input
                         type="text"
@@ -143,18 +142,15 @@ const Page = () => {
                     disabled={isSwitchLoading}
                 />
                 <span className="ml-2">
-          Accept Messages: {acceptMessages ? 'On' : 'Off'}
-        </span>
+                    Accept Messages: {acceptMessages ? 'On' : 'Off'}
+                </span>
             </div>
             <Separator/>
 
             <Button
                 className="mt-4"
                 variant="outline"
-                onClick={(e) => {
-                    e.preventDefault();
-                    getAllMessages(true);
-                }}
+                onClick={() => getAllMessages(true)}
             >
                 {isLoading ? (
                     <Loader2 className="h-4 w-4 animate-spin"/>
@@ -162,11 +158,12 @@ const Page = () => {
                     <RefreshCcw className="h-4 w-4"/>
                 )}
             </Button>
+
             <div className="mt-4 grid grid-cols-1 md:grid-cols-2 gap-6">
                 {messages.length > 0 ? (
                     messages.map((message) => (
                         <MessageCard
-                            key={message._id as number | string}
+                            key={message._id as string}
                             message={message}
                             onMessageDeleteHandler={handleDeleteMessage}
                         />
@@ -177,5 +174,6 @@ const Page = () => {
             </div>
         </div>
     );
-}
-export default Page
+};
+
+export default Page;

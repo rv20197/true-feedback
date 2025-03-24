@@ -12,11 +12,11 @@ import {
     AlertDialogTrigger,
 } from "@/components/ui/alert-dialog"
 import {Button} from "@/components/ui/button"
-import {DeleteIcon} from "lucide-react";
 import {Message} from "@/models/Message";
 import axios from "axios";
 import {ApiResponse} from "@/types/ApiResponse";
 import {toast} from "sonner";
+import {X} from "lucide-react";
 
 type MessageCardProps = {
     message: Message;
@@ -33,18 +33,18 @@ const MessageCard = ({message, onMessageDeleteHandler}: MessageCardProps) => {
 
     return (
         <Card>
-            <CardHeader>
-                <CardTitle>{message.content}</CardTitle>
+            <CardHeader className={'gap-4'}>
+                <CardTitle>{message.content} </CardTitle>
                 <AlertDialog>
                     <AlertDialogTrigger asChild>
-                        <Button variant="destructive"><DeleteIcon className='w-5 h-5'/></Button>
+                        <Button variant="destructive"><X className='w-5 h-5'/></Button>
                     </AlertDialogTrigger>
                     <AlertDialogContent>
                         <AlertDialogHeader>
                             <AlertDialogTitle>Are you absolutely sure?</AlertDialogTitle>
                             <AlertDialogDescription>
-                                This action cannot be undone. This will permanently delete your
-                                message and remove your data from our servers.
+                                This action cannot be undone. This will permanently delete
+                                message.
                             </AlertDialogDescription>
                         </AlertDialogHeader>
                         <AlertDialogFooter>
@@ -53,6 +53,7 @@ const MessageCard = ({message, onMessageDeleteHandler}: MessageCardProps) => {
                         </AlertDialogFooter>
                     </AlertDialogContent>
                 </AlertDialog>
+
             </CardHeader>
         </Card>
 

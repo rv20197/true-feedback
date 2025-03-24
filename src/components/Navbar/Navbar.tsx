@@ -28,7 +28,7 @@ const Navbar = () => {
                 <Link href={"#"} className={'text-xl font-bold md:mb-0'}>Mystery Message</Link>
                 {session ? (
                     <Fragment>
-                        <span className={'mr-4'}>Welcome , {user?.name || user?.email}</span>
+                        <span className={'mr-4'}>Welcome, {user?.username}</span>
                         <Button className='w-full md:w-auto' onClick={() => signOut()}>Sign Out</Button>
                     </Fragment>
                 ) : (

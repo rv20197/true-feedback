@@ -73,7 +73,7 @@ export const GET = async (): Promise<Response> => {
         ]);
 
         // Check if the user messages were not found
-        if (!userMessages) {
+        if (userMessages.length === 0) {
             return Response.json({
                 success: false,
                 message: "User messages not found"
@@ -85,7 +85,7 @@ export const GET = async (): Promise<Response> => {
         // Return the success response with the messages
         return Response.json({
             success: true,
-            messages: userMessages[0].messages
+            messages: userMessages?.[0].messages
         }, {
             status: 200
         });

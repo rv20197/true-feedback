@@ -13,7 +13,7 @@ export async function middleware(request: NextRequest): Promise<NextResponse | n
     const token = await getToken({req: request});
     const currentPath = request.nextUrl.pathname;
     // If the user is signed in and the path is the signin, signup, verify or root path, redirect to the dashboard.
-    if (token && (currentPath.startsWith('/sign-in') || currentPath.startsWith('/sign-up') || currentPath.startsWith('/verify') || currentPath.startsWith('/'))) {
+    if (token && (currentPath.startsWith('/sign-in') || currentPath.startsWith('/sign-up') || currentPath.startsWith('/verify') || currentPath.startsWith('/')) && currentPath !== '/dashboard') {
         return NextResponse.redirect(new URL('/dashboard', request.url));
     }
     // If the user is not signed in or the path is not one of the above, do nothing and allow the request to pass through to the next middleware or the page.

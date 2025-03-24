@@ -34,8 +34,8 @@ a custom authentication, authorization, and session management mechanism.
 
 1. Clone the repository:
    ```sh
-   git clone https://github.com/yourusername/anonymous-messaging-app.git
-   cd anonymous-messaging-app
+   git clone https://github.com/rv20197/true-feedback.git
+   cd true-feedback
    ```
 2. Install dependencies:
    ```sh

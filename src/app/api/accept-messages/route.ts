@@ -41,7 +41,7 @@ export const POST = async (request: Request): Promise<Response> => {
         return Response.json({
             success: true,
             message: "Message acceptance status updated successfully",
-            updatedUser
+            isAcceptingMessages: updatedUser.isAcceptingMessages
         }, {status: 200});
     } catch (e) {
         // Log the error and return a server error response

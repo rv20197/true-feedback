@@ -1,0 +1,81 @@
+'use client';
+import {Card, CardHeader, CardTitle,} from "@/components/ui/card"
+import {
+    AlertDialog,
+    AlertDialogAction,
+    AlertDialogCancel,
+    AlertDialogContent,
+    AlertDialogDescription,
+    AlertDialogFooter,
+    AlertDialogHeader,
+    AlertDialogTitle,
+    AlertDialogTrigger,
+} from "@/components/ui/alert-dialog"
+import {Button} from "@/components/ui/button"
+import {Message} from "@/models/Message";
+import axios from "axios";
+import {ApiResponse} from "@/types/ApiResponse";
+import {toast} from "sonner";
+import {X} from "lucide-react";
+
+type MessageCardProps = {
+    message: Message;
+    onMessageDeleteHandler: (messageId: string) => void
+}
+
+/**
+ * @param {{message: Message, onMessageDeleteHandler: (messageId: string) => void}} props
+ * @returns {JSX.Element}
+ */
+const MessageCard = ({message, onMessageDeleteHandler}: {
+    message: Message;
+    onMessageDeleteHandler: (messageId: string) => void;
+}) => {
+
+    const deleteMessageHandler = async () => {
+        // Make a DELETE request to the API to delete the message
+        const response = await axios.delete<ApiResponse>(`/api/delete-message/${message._id}`);
+        // Show a success toast message
+        toast.success(response.data.message);
+        // Call the `onMessageDeleteHandler` function to remove the message from the list
+        onMessageDeleteHandler(message._id as string);
+    }
+
+    return (
+        // Render a Card component
+        <Card>
+            <CardHeader className={'gap-4'}>
+                // Render a CardTitle component to display the message content
+                <CardTitle>{message.content}</CardTitle>
+                // Render an AlertDialog component to confirm deletion
+                <AlertDialog>
+                    // Render the trigger button
+                    <AlertDialogTrigger asChild>
+                        <Button variant="destructive"><X className='w-5 h-5'/></Button>
+                    </AlertDialogTrigger>
+                    // Render the alert dialog content
+                    <AlertDialogContent>
+                        // Render the alert dialog header
+                        <AlertDialogHeader>
+                            // Render the alert dialog title
+                            <AlertDialogTitle>Are you absolutely sure?</AlertDialogTitle>
+                            // Render the alert dialog description
+                            <AlertDialogDescription>
+                                This action cannot be undone. This will permanently delete
+                                message.
+                            </AlertDialogDescription>
+                        </AlertDialogHeader>
+                        // Render the alert dialog footer
+                        <AlertDialogFooter>
+                            // Render the cancel button
+                            <AlertDialogCancel>Cancel</AlertDialogCancel>
+                            // Render the delete button
+                            <AlertDialogAction onClick={deleteMessageHandler}>Delete Message</AlertDialogAction>
+                        </AlertDialogFooter>
+                    </AlertDialogContent>
+                </AlertDialog>
+            </CardHeader>
+        </Card>
+    )
+}
+export default MessageCard

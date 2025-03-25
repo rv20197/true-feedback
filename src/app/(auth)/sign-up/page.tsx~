@@ -113,7 +113,7 @@ const Page = () => {
                                 <FormItem>
                                     <FormLabel>Username</FormLabel>
                                     <FormControl>
-                                        <Input placeholder="UserName" {...field} type={"text"}
+                                        <Input placeholder="User Name" {...field} type={"text"}
                                                onChange={e => {
                                                    debounced(e.target.value);
                                                    field.onChange(e)
@@ -121,7 +121,7 @@ const Page = () => {
                                     </FormControl>
                                     {isCheckingUserName && <Loader2 className={"animate-spin"}/>}
                                     {userNameMessage && <span
-                                        className={`text-sm ${userNameMessage === 'Username is available' ? 'text-green-300' : 'text-destructive'}`}>{userNameMessage}</span>}
+                                        className={`text-sm ${userNameMessage === 'Username is available' ? 'text-green-500' : 'text-destructive'}`}>{userNameMessage}</span>}
                                     <FormMessage/>
                                 </FormItem>
                             )}

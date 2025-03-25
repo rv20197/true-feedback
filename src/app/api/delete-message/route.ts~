@@ -1,0 +1,23 @@
+import dbConnect from "@/lib/dbConnect";
+import {getServerSession, User} from "next-auth";
+import {authOptions} from "@/app/api/auth/[...nextauth]/options";
+import UserModel from "@/models/User";
+import mongoose from "mongoose";
+
+export const GET = async (): Promise<Response> => {
+    await dbConnect();
+    // Get the current session and user information
+    const session = await getServerSession(authOptions);
+    const user: User = session?.user as User;
+
+    // Check if the session or user is invalid
+    if (!session || !user) {
+        return Response.json({
+            success: false,
+            message: "Unauthorized"
+        }, {
+            status: 401
+        });
+    }
+
+}
